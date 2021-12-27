@@ -6,13 +6,18 @@
     ref="map"
     @update:zoom="zoomUpdated"
     @update:center="centerUpdated"
+    @update="updated"
     @ready="created"
   >
     <l-tile-layer
       :url="url"
     >
     </l-tile-layer>
-    <l-geo-json :geojson="geojson"></l-geo-json>
+    <l-geo-json 
+      :geojson="geojson"
+      :key="cle"
+    >
+    </l-geo-json>
     <Magasin
       v-for="marker in markers"
       :key="marker.id"
@@ -26,12 +31,27 @@
 import { LMap, LTileLayer, LGeoJson } from 'vue2-leaflet';
 import Magasin from './Magasin'
 import 'leaflet/dist/leaflet.css';
+
 export default {
   components: {
     LMap,
     LTileLayer,
     Magasin,
     LGeoJson
+  },
+  props : {
+      region: null
+  },
+  watch: {
+    region : async function() {
+      if (this.region != '' || this.region == null)
+      {
+        this.buildName(this.region);
+        const response = await fetch(this.geojson);
+        this.geojson = await response.json();
+        this.cle ++
+      }
+    }
   },
   data () {
     return {
@@ -45,19 +65,26 @@ export default {
         {id: 4, coordinates: [ 49.136010, 6.199630 ], name : "Décathlon"},
         {id: 5, coordinates: [ 49.105563, 6.182234 ], name : "Bricorama"},
       ],
-      geojson: null
+      geojson: null,
+      cle: null,
     }
   },
   methods: {
+    async updated () {
+      this.geojson= ''
+    },
     async created () {
-		const response = await fetch('https://rawgit.com/gregoiredavid/france-geojson/master/regions/grand-est/departements-grand-est.geojson');
-		this.geojson = await response.json();
-	},
+      this.geojson = ''
+      this.cle = 1
+    },
     zoomUpdated (zoom) {
       this.zoom = zoom;
     },
     centerUpdated (center) {
       this.center = center;
+    },
+    buildName (region) {
+      this.geojson = 'https://rawgit.com/gregoiredavid/france-geojson/master/regions/' + region + '/departements-' + region + '.geojson'
     }
   }
 }
@@ -66,8 +93,9 @@ export default {
 <style>
   .map {
     position: absolute;
-    width: 100%;
     height: 100%;
-    overflow :hidden
+    width: 80% !important;
+    overflow :hidden;
+    right: 0;
   }
 </style>
