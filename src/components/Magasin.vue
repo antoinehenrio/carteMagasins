@@ -2,6 +2,7 @@
   <l-marker
     :key="marker.id"
     :lat-lng="marker.coordinates"
+    :name="marker.name"
   >
   </l-marker>
 </template>
