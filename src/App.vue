@@ -2,6 +2,7 @@
   <div id="app">
     <div class="sideBar">
       <h1>Menu</h1>
+      <p class="dropdownHeader">Régions</p>
       <Dropdown 
         :options="provinces"
         v-on:selected="validateSelection"
@@ -103,6 +104,12 @@ body {
   position: static;
   height: 100vh !important;
   margin: 0;
+}
+
+.dropdownHeader {
+  text-align: start !important;
+  padding-left: 1vw;
+  margin-bottom: 7px;
 }
 
 </style>

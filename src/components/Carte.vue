@@ -1,4 +1,5 @@
 <template>
+  <div>
   <l-map
     :center="center"
     :zoom="zoom"
@@ -18,26 +19,47 @@
       :key="cle"
     >
     </l-geo-json>
-    <Magasin
-      v-for="marker in markers"
-      :key="marker.id"
-      :marker="marker"
+    <v-marker-cluster
+      ref="cluster"
+      :averageCenter="true"
+      :ignoreHidden="true"
+      :options="clusterOptions"
     >
+      <Magasin
+        v-for="marker in markers"
+        :key="marker.id"
+        :marker="marker"
+      >
     </Magasin>
+    </v-marker-cluster>
   </l-map>
+  </div>
 </template>
 
 <script>
+import Vue from 'vue';
 import { LMap, LTileLayer, LGeoJson } from 'vue2-leaflet';
 import Magasin from './Magasin'
 import 'leaflet/dist/leaflet.css';
+import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster';
+import ClusterIcon from './cluster-icon';
+import { Icon, divIcon } from 'leaflet';
+
+const EnhancedClusterIcon = Vue.extend(ClusterIcon);
+delete Icon.Default.prototype._getIconUrl;
+Icon.Default.mergeOptions({
+    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+    iconUrl: require('leaflet/dist/images/marker-icon.png'),
+    shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+})
 
 export default {
   components: {
     LMap,
     LTileLayer,
     Magasin,
-    LGeoJson
+    LGeoJson,
+    'v-marker-cluster': Vue2LeafletMarkerCluster
   },
   props : {
       region: null
@@ -59,14 +81,27 @@ export default {
       center: [ 49.1193089, 6.1757156 ],
       zoom: 12,
       markers: [
-        {id: 1, coordinates: [ 49.114910, 6.178810 ], name : "Carrefour"},
-        {id: 2, coordinates: [ 49.133290, 6.154370 ], name : "Leclerc"},
-        {id: 3, coordinates: [ 49.102160, 6.158850 ], name : "Auchan"},
-        {id: 4, coordinates: [ 49.136010, 6.199630 ], name : "Décathlon"},
-        {id: 5, coordinates: [ 49.105563, 6.182234 ], name : "Bricorama"},
+        {id: 1, coordinates: [ 49.114910, 6.178810 ], name : "Carrefour", address : "1 rue Victor Hugo"},
+        {id: 2, coordinates: [ 49.133290, 6.154370 ], name : "Leclerc", address : "1 rue Charles Leclerc"},
+        {id: 3, coordinates: [ 49.102160, 6.158850 ], name : "Auchan", address : "1 rue Frédéric Chopin"},
+        {id: 4, coordinates: [ 49.136010, 6.199630 ], name : "Décathlon", address : "1 rue Serguei Prokofiev"},
+        {id: 5, coordinates: [ 49.105563, 6.182234 ], name : "Bricorama", address : "1 rue Fédor Dostoievski"},
+        {id: 6, coordinates: [ 48.856614, 2.352219 ], name : "Paris", address : "1 rue Fédor Dostoievski"},
       ],
       geojson: null,
       cle: null,
+      clusterOptions: {
+          spiderfyDistanceMultiplier: 1,
+          iconCreateFunction: cluster => {
+              let clusterUsers = cluster.getAllChildMarkers().map(marker => marker.id)
+              let clusterIconEl = new EnhancedClusterIcon({propsData: { clusterUsers }}).$mount().$el
+              return divIcon({
+                  html: clusterIconEl.outerHTML,
+                  className: 'cluster',
+                  iconSize: null
+              })
+          }
+      }
     }
   },
   methods: {
@@ -86,11 +121,18 @@ export default {
     buildName (region) {
       this.geojson = 'https://rawgit.com/gregoiredavid/france-geojson/master/regions/' + region + '/departements-' + region + '.geojson'
     }
-  }
+  },
 }
 </script>
 
 <style>
+@import "~leaflet.markercluster/dist/MarkerCluster.css";
+  .cluster {
+    position: absolute;
+    margin-left: -20px;
+    margin-top: -20px;
+  }
+
   .map {
     position: absolute;
     height: 100%;
