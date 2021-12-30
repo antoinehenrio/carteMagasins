@@ -116,7 +116,6 @@ export default {
       }
     }
   },
-  //test
   data () {
     return {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
