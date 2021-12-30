@@ -116,6 +116,7 @@ export default {
       }
     }
   },
+  //test
   data () {
     return {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -130,16 +131,16 @@ export default {
         {id: 5, coordinates: [ 49.105563, 6.182234 ], name : "Bricorama", address : "1 rue Fédor Dostoievski"},
         {id: 6, coordinates: [ 48.856614, 2.352219 ], name : "Paris", address : "1 rue Fédor Dostoievski"},
         {id: 7, coordinates: [ 41.97601, 8.68667 ], name : "Brise de mer", address : "1 rue de l'indépendance"},
-        {id: 8, coordinates: [ 48.957500, 4.365000 ], name : "Chalons", address : "1 rue de l'erreur"},
-        {id: 9, coordinates: [ 48.692054, 6.184417 ], name : "Nancy", address : "1 rue de l'erreur"},
-        {id: 10, coordinates: [ 48.113748, 5.1392559 ], name : "Chaumont", address : "1 rue de l'erreur"},
-        {id: 12, coordinates: [ 48.2973451, 4.0744009 ], name : "Troyes", address : "1 rue de l'erreur"},
-        {id: 13, coordinates: [ 49.762085, 4.726096 ], name : "Charleville", address : "1 rue de l'erreur"},
-        {id: 14, coordinates: [ 48.172402, 6.449403 ], name : "épinal", address : "1 rue de l'erreur"},
-        {id: 15, coordinates: [ 49.159876, 5.384423 ], name : "Verdun", address : "1 rue de l'erreur"},
-        {id: 16, coordinates: [ 47.7486, 7.33944 ], name : "Mulhouse", address : "1 rue de l'erreur"},
-        {id: 17, coordinates: [ 48.732663, 7.052587 ], name : "Sarrebourg", address : "1 rue de l'erreur"},
-        {id: 18, coordinates: [ 48.5734053, 7.7521113 ], name : "Strasbourg", address : "1 rue de l'erreur"},
+        {id: 8, coordinates: [ 48.957500, 4.365000 ], name : "Chalons", address : "1 rue de chalons"},
+        {id: 9, coordinates: [ 48.692054, 6.184417 ], name : "Nancy", address : "1 rue de nancy"},
+        {id: 10, coordinates: [ 48.113748, 5.1392559 ], name : "Chaumont", address : "1 rue de chaumont"},
+        {id: 12, coordinates: [ 48.2973451, 4.0744009 ], name : "Troyes", address : "1 rue de troyes"},
+        {id: 13, coordinates: [ 49.762085, 4.726096 ], name : "Charleville", address : "1 rue de charleville"},
+        {id: 14, coordinates: [ 48.172402, 6.449403 ], name : "épinal", address : "1 rue d'épinal"},
+        {id: 15, coordinates: [ 49.159876, 5.384423 ], name : "Verdun", address : "1 rue de Verdun"},
+        {id: 16, coordinates: [ 47.7486, 7.33944 ], name : "Mulhouse", address : "1 rue de Mulhouse"},
+        {id: 17, coordinates: [ 48.732663, 7.052587 ], name : "Sarrebourg", address : "1 rue de Sarrebourg"},
+        {id: 18, coordinates: [ 48.5734053, 7.7521113 ], name : "Strasbourg", address : "1 rue de Strasbourg"},
       ],
       markersTest: [],
       cle: null,
