@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="sideBar">
-      <h1>Menu</h1>
+      <h1 class="header">Menu</h1>
       <p class="dropdownHeader">Régions</p>
       <Dropdown 
         :options="provinces"
@@ -14,8 +14,11 @@
         placeholder="Sélectionnez une région">
       >
       </Dropdown>
+      <button class="btnReset" @click="resetGeoJson">
+        Réinitialiser les filtres
+      </button>
     </div>
-    <Carte :region="region"/>
+    <Carte :geojson="geojson"/>
   </div>
 </template>
 
@@ -52,13 +55,20 @@ export default {
           { id: 'provence-alpes-cote-d-azur', name: 'Provence Alpes Côte d\'Azur'}
         ],
       selected: { name: '', id: ''},
-      region: ''
+      region: '',
+      geojson: ''
     }
   },
   methods : {
     validateSelection (selection) {
       this.selected = selection;
-      this.region = selection.id;
+      this.buildName(selection.id);
+    },
+    buildName (region) {
+      this.geojson = 'https://rawgit.com/gregoiredavid/france-geojson/master/regions/' + region + '/departements-' + region + '.geojson'
+    },
+    resetGeoJson () {
+      this.geojson = ''
     }
   }
 }
@@ -73,7 +83,7 @@ body {
 }
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Verdana, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -86,6 +96,7 @@ body {
   display: inline-block !important;
   width: 18vw !important;
   max-width: 20vw !important;
+  height: 30px;
 }
 
 .dropdown-item {
@@ -110,6 +121,22 @@ body {
   text-align: start !important;
   padding-left: 1vw;
   margin-bottom: 7px;
+  color: #3F88C5;
+}
+
+.btnReset {
+  width: 19vw;
+  margin-top: 1vh;
+  border-radius: 3px;
+  border: none;
+  height: 40px;
+  background-color: #3F88C5;
+  color: white;
+  font-size: 18px;
+}
+
+.header {
+  color: #3F88C5;
 }
 
 </style>

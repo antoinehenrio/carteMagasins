@@ -15,7 +15,7 @@
     >
     </l-tile-layer>
     <l-geo-json 
-      :geojson="geojson"
+      :geojson="geojsonData"
       :key="cle"
     >
     </l-geo-json>
@@ -63,57 +63,64 @@ export default {
     'v-marker-cluster': Vue2LeafletMarkerCluster
   },
   props : {
-      region: null
+      region: null,
+      geojson: null
   },
   watch: {
-    region : async function() {
-      if (this.region != '' || this.region == null)
-      {
-        this.markersTest = []
-        this.buildName(this.region);
-        const response = await fetch(this.geojson);
-        this.geojson = await response.json();
-        var features = this.geojson.features;
-        for (var i = 0; i < this.geojson.features.length; i++){
-          var tabswag = []
-          if (features[i].geometry.type == "MultiPolygon") {
-            for (var l =0; l< features[i].geometry.coordinates.length; l++) {
-              var tabTempMulti = []
-              for (var k = 0; k< features[i].geometry.coordinates[l][0].length; k++) {
-                tabTempMulti.push(features[i].geometry.coordinates[l][0][k])
-              }
-              var polyTempMulti = turf.polygon([tabTempMulti]);
-              tabswag.push(polyTempMulti)
-            }
-          }
-          else {
-            for (var m=0; m<features[i].geometry.coordinates.length; m++) {
-              var tabTemp = []
-              for (var j =0; j< features[i].geometry.coordinates[m].length; j++) {
-                tabTemp.push(features[i].geometry.coordinates[m][j])
-              }
-              try {
-                var polyTemp = turf.polygon([tabTemp]);
-              }
-              catch(error){
-                console.log(error.message);
-              }
-              
-              tabswag.push(polyTemp)
-            }
-          }
-          for (var cpPoly=0; cpPoly < tabswag.length; cpPoly ++) {
-              for (var cpMarkers=0; cpMarkers<this.markers.length; cpMarkers++) {
-                var pt = turf.point(this.markers[cpMarkers].coordinates)
-                pt = turf.flip(pt)
-                if (turf.booleanPointInPolygon(pt, tabswag[cpPoly])) {
-                  this.markersTest.push(this.markers[cpMarkers])
-                }
-              }
-          }
+    geojson : async function() {
+        if (this.geojson == '' || this.geojson == null || this.geojson == undefined){
+          this.markersTest = this.markers
+          this.geojsonData = []
         }
-        this.cle ++
-      }
+        else {
+          this.markersTest = []
+        // this.buildName(this.region);
+          const response = await fetch(this.geojson);
+          this.geojsonData = await response.json();
+          console.log(this.geojson)
+          var features = this.geojsonData.features;
+          for (var i = 0; i < this.geojsonData.features.length; i++){
+            var tabswag = []
+            if (features[i].geometry.type == "MultiPolygon") {
+              for (var l =0; l< features[i].geometry.coordinates.length; l++) {
+                var tabTempMulti = []
+                for (var k = 0; k< features[i].geometry.coordinates[l][0].length; k++) {
+                  tabTempMulti.push(features[i].geometry.coordinates[l][0][k])
+                }
+                var polyTempMulti = turf.polygon([tabTempMulti]);
+                tabswag.push(polyTempMulti)
+              }
+            }
+            else {
+              for (var m=0; m<features[i].geometry.coordinates.length; m++) {
+                var tabTemp = []
+                for (var j =0; j< features[i].geometry.coordinates[m].length; j++) {
+                  tabTemp.push(features[i].geometry.coordinates[m][j])
+                }
+                try {
+                  var polyTemp = turf.polygon([tabTemp]);
+                }
+                catch(error){
+                  console.log(error.message);
+                }
+                
+                tabswag.push(polyTemp)
+              }
+            }
+            for (var cpPoly=0; cpPoly < tabswag.length; cpPoly ++) {
+                for (var cpMarkers=0; cpMarkers<this.markers.length; cpMarkers++) {
+                  var pt = turf.point(this.markers[cpMarkers].coordinates)
+                  pt = turf.flip(pt)
+                  if (turf.booleanPointInPolygon(pt, tabswag[cpPoly])) {
+                    this.markersTest.push(this.markers[cpMarkers])
+                  }
+                }
+            }
+          }
+          this.cle ++
+        }
+        
+      // }
     }
   },
   data () {
@@ -121,7 +128,7 @@ export default {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       center: [ 49.1193089, 6.1757156 ],
       zoom: 8,
-      geojson: '',
+      // geojson: '',
       markers: [
         {id: 1, coordinates: [ 49.114910, 6.178810 ], name : "Carrefour", address : "1 rue Victor Hugo"},
         {id: 2, coordinates: [ 49.133290, 6.154370 ], name : "Leclerc", address : "1 rue Charles Leclerc"},
@@ -143,6 +150,7 @@ export default {
       ],
       markersTest: [],
       cle: null,
+      geojsonData: '',
       clusterOptions: {
           spiderfyDistanceMultiplier: 1,
           iconCreateFunction: cluster => {
