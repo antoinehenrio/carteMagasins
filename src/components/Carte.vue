@@ -74,13 +74,18 @@ export default {
         }
         else {
           this.markersTest = []
-        // this.buildName(this.region);
-          const response = await fetch(this.geojson);
-          this.geojsonData = await response.json();
-          console.log(this.geojson)
+          var tabswag = []
+          if (this.isJSON(this.geojson) == false) {
+            this.geojsonData = this.geojson
+          }
+          else {
+            this.geojsonData = JSON.parse(this.geojson)
+          }
+          // tabswag.push = turf.polygon([this.geojsonData.geometry.coordinates[0]])
           var features = this.geojsonData.features;
-          for (var i = 0; i < this.geojsonData.features.length; i++){
-            var tabswag = []
+          if (features != undefined){
+          for (var i = 0; i < features.length; i++){
+            tabswag = []
             if (features[i].geometry.type == "MultiPolygon") {
               for (var l =0; l< features[i].geometry.coordinates.length; l++) {
                 var tabTempMulti = []
@@ -107,20 +112,16 @@ export default {
                 tabswag.push(polyTemp)
               }
             }
-            for (var cpPoly=0; cpPoly < tabswag.length; cpPoly ++) {
-                for (var cpMarkers=0; cpMarkers<this.markers.length; cpMarkers++) {
-                  var pt = turf.point(this.markers[cpMarkers].coordinates)
-                  pt = turf.flip(pt)
-                  if (turf.booleanPointInPolygon(pt, tabswag[cpPoly])) {
-                    this.markersTest.push(this.markers[cpMarkers])
-                  }
-                }
-            }
+            this.filterMarkers(tabswag);
+          }
+            
+          }
+          else {
+            tabswag.push(turf.polygon([this.geojsonData.geometry.coordinates[0]]))
+            this.filterMarkers(tabswag);
           }
           this.cle ++
         }
-        
-      // }
     }
   },
   data () {
@@ -187,18 +188,40 @@ export default {
     buildName (region) {
       this.geojson = 'https://rawgit.com/gregoiredavid/france-geojson/master/regions/' + region + '/departements-' + region + '.geojson'
     },
+    isJSON(str){
+      if (typeof str !== 'string') return false;
+      try {
+        const result = JSON.parse(str);
+        const type = Object.prototype.toString.call(result);
+        return type === '[object Object]' 
+          || type === '[object Array]';
+      } catch (err) {
+        return false;
+      }
+    },
+    filterMarkers(tab) {
+      for (var cpPoly=0; cpPoly < tab.length; cpPoly ++) {
+                for (var cpMarkers=0; cpMarkers<this.markers.length; cpMarkers++) {
+                  var pt = turf.point(this.markers[cpMarkers].coordinates)
+                  pt = turf.flip(pt)
+                  if (turf.booleanPointInPolygon(pt, tab[cpPoly])) {
+                    this.markersTest.push(this.markers[cpMarkers])
+                  }
+                }
+            }
+    }
   },
 }
 </script>
 
 <style>
+
 @import "~leaflet.markercluster/dist/MarkerCluster.css";
   .cluster {
     position: absolute;
     margin-left: -20px;
     margin-top: -20px;
   }
-
   .map {
     position: absolute;
     height: 100%;
