@@ -215,7 +215,12 @@ export default {
 </script>
 
 <style>
-
+@media only screen and (max-width: 500px) {
+  .map {
+    min-width: 100% !important;
+    z-index: 10 !important;
+  }
+}
 @import "~leaflet.markercluster/dist/MarkerCluster.css";
   .cluster {
     position: absolute;

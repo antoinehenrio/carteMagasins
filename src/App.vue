@@ -2,23 +2,28 @@
   <div id="app">
     <div class="sideBar">
       <h1 class="header">Menu</h1>
-      <p class="dropdownHeader">Régions</p>
-      <Dropdown 
-        :options="provinces"
-        v-on:selected="validateSelection"
-        v-on:filter="getDropdownValues"
-        :disabled="false"
-        name="zipcode"
-        class="dropdownFilter"
-        :maxItem="100"
-        placeholder="Sélectionnez une région">
-      >
-      </Dropdown>
-      <FileReader @load="text = $event"/>
+      <div class="regionWrapper">
+        <p class="dropdownHeader">Régions</p>
+        <Dropdown 
+          :options="provinces"
+          v-on:selected="validateSelection"
+          v-on:filter="getDropdownValues"
+          :disabled="false"
+          name="zipcode"
+          class="dropdownFilter"
+          :maxItem="100"
+          placeholder="Sélectionnez une région">
+        >
+        </Dropdown>
+      </div>
+      <div class="secondaryWrapper">
+      <p class="dropdownHeader">Sélectionner un set Geojson</p>
+      <FileReader @load="text = $event" class="reader"/>
       <label class="errorJson" v-if="estJson">Le fichier n'est pas au bon format</label>
       <button class="btnReset" @click="resetGeoJson">
         Réinitialiser les filtres
       </button>
+      </div>
     </div>
     <Carte :geojson="geojson"/>
   </div>
@@ -105,6 +110,71 @@ export default {
 </script>
 
 <style>
+@media only screen and (max-width: 500px) {
+  #app {
+    grid-template-rows: 20vh 1fr !important;
+    grid-template-columns: 1fr !important;
+  }
+  .reader {
+    width: 80vw !important;
+    min-width: 80vw !important;
+    max-width: 90vw !important;
+  }
+
+  input {
+    max-width: 80vw !important;
+    width: 80vw !important;
+    z-index: 1002 !important;
+  }
+
+  .sideBar {
+    height: 30vh !important;
+    z-index: 100 !important;
+    display: grid;
+    grid-template-rows: 8vh 8vh 8vh !important;
+    max-width: 100vw;
+  }
+
+  .header {
+    font-size: 18px;
+    display: none;
+  }
+
+  .regionWrapper {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .secondaryWrapper {
+    grid-row-start: 2;
+    grid-column-start: 1;
+  }
+
+  .dropdownHeader {
+    display: none;
+  }
+
+  .dropdown-input {
+    max-width: 80vw !important;
+    width: 80vw !important;
+    min-width: 80vw !important;
+    margin-bottom: 0 !important;
+    z-index: 1002 !important;
+  }
+
+  .dropdown-item {
+    z-index: 1001 !important;
+  }
+
+  .btnReset {
+    display: block;
+    margin: auto;
+    width: 80vw !important;
+    font-size: 16px !important;
+    margin: auto;
+    margin-top: 0 !important;
+  }
+}
+
 
 body {
   margin: 0 !important;
@@ -119,10 +189,11 @@ body {
   display: grid;
   grid-template-columns: 20vw 1fr;
 }
-.dropdown .dropdown-input {
+/*.dropdown .dropdown-input {*/
+input {
   display: inline-block !important;
-  width: 18vw !important;
-  max-width: 20vw !important;
+  width: 18vw;
+  max-width: 20vw;
   height: 30px;
   min-width: 0px !important;
 }
@@ -137,8 +208,7 @@ body {
   position: static !important;
 }
 .sideBar {
-  position: static;
-  height: 100vh !important;
+  height: 100vh;
   margin: 0;
 }
 .dropdownHeader {
@@ -164,5 +234,6 @@ body {
   color: red;
   font-size: 16px;
 }
+
 
 </style>
